@@ -1,9 +1,36 @@
+/*
+break - ok
+default - ok
+func - ok
+interface - ok
+select - ok
+case -ok
+defer - ok
+go - ok
+map - ok
+struct - ok
+chan - ok
+else - ok
+goto -
+package - ok
+switch -
+const - ok
+fallthrough -
+if - ok
+range - ok
+type - ok
+continue - ok
+for - ok
+import - ok
+return - ok
+var - ok
+*/
 package main
 
 import (
-	"fmt"
 	format "fmt"
 	"log"
+	"time"
 
 	. "github.com/dgkg/gomasterclasses/keywords/service"
 )
@@ -59,11 +86,13 @@ func main() {
 			"509b6424-567e-11ec-8dbf-27dfb4b91470",
 			"Bob",
 			"L'Eponge",
+			SuperAdmin,
 		},
 		3: &User{
 			"71b6ccf2-567e-11ec-b0b4-078b2459bca4",
 			"Robert",
 			"Miles",
+			Admin,
 		},
 	}
 
@@ -79,6 +108,11 @@ func main() {
 
 	for k := range listUser {
 		log.Printf("%#v", listUser[k])
+		if listUser[k].AccessLevel == Admin {
+			format.Println(listUser[k].FirstName, " is ", Admin)
+		} else if listUser[k].UUID == "71b6ccf2-567e-11ec-b0b4-078b2459bca4" {
+			format.Println(listUser[k].FirstName, " is ", listUser[k].AccessLevel)
+		}
 	}
 
 	tblUser := []User{
@@ -86,24 +120,84 @@ func main() {
 			"509b6424-567e-11ec-8dbf-27dfb4b91470",
 			"Bob",
 			"L'Eponge",
+			Admin,
 		},
 		User{
 			"71b6ccf2-567e-11ec-b0b4-078b2459bca4",
 			"Robert",
 			"Miles",
+			SuperAdmin,
 		},
 	}
-	fmt.Println("tblUser", tblUser[len(tblUser)-1:])
+	format.Println("tblUser", tblUser[len(tblUser)-1:])
 	tblUser = append(tblUser, User{
-		UUID:      "924c7680-5681-11ec-b0be-7b88d45fe63d",
-		FirstName: "Rene",
-		LastName:  "French",
+		UUID:        "924c7680-5681-11ec-b0be-7b88d45fe63d",
+		FirstName:   "Rene",
+		LastName:    "French",
+		AccessLevel: SuperAdmin,
 	})
-	fmt.Println("tblUser new", tblUser)
+	format.Println("tblUser new", tblUser)
+	execSomethingHeavy()
+
+	tblAll := []interface{}{
+		tblUser[:],
+		Animal{
+			Name: "Mistigris",
+		},
+	}
+	_ = tblAll
+
+	for _, v := range tblAll {
+		switch v.(type) {
+		case User, *User:
+			format.Println("this is a Human")
+		case []User:
+			format.Println("this is a group of Humans")
+		case Animal, *Animal:
+			format.Println("this is an Animal")
+		default:
+			format.Println("we don't know what it is")
+		}
+	}
 }
 
 type User struct {
-	UUID      string
-	FirstName string
-	LastName  string
+	UUID        string
+	FirstName   string
+	LastName    string
+	AccessLevel AccessLevel
+}
+
+type Animal struct {
+	UUID string
+	Name string
+}
+
+func newTicker(sec uint) *time.Ticker {
+	return time.NewTicker(time.Duration(sec) * time.Second)
+}
+
+func doSomethingHeavy(todo chan string) {
+	defer format.Println("finished")
+	time.Sleep(2 * time.Second)
+	todo <- "done"
+}
+
+func execSomethingHeavy() {
+	ticker := newTicker(10)
+	todo := make(chan string)
+	go doSomethingHeavy(todo)
+loop:
+	for {
+		select {
+		case <-ticker.C:
+			format.Println("ticker has tick")
+			break loop
+		case res := <-todo:
+			format.Println("res is:", res)
+			return
+		default:
+			//format.Print("wait for result...")
+		}
+	}
 }
