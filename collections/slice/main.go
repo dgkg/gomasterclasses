@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -32,37 +31,35 @@ func NewUser(fn, ln string) *User {
 var list []*User
 
 func main() {
+	// ADD
 	u, err := Add("Bob", "Pike")
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
-	Update(u.UUID, "Rene", "French")
-	u2, _ := Get(u.UUID)
-	fmt.Printf("user 2 is: %#v", u2)
-	fmt.Printf("%#v", list)
-	fmt.Println("before delete")
-	Delete(u.UUID)
-	fmt.Println("after delete")
-	fmt.Printf("%#v", list)
 
-	var tbl []uint8
-	var capTbl int = cap(tbl)
-	for i := 0; i < 200; i++ {
-		tbl = append(tbl, uint8(i))
-		if cap(tbl) != capTbl {
-			log.Println("new capacity", capTbl)
-			capTbl = cap(tbl)
-		}
+	// Update
+	_, err = Update(u.UUID, "Rene", "French")
+	if err != nil {
+		panic(err)
 	}
-	for i := 0; i < len(tbl); i++ {
-		log.Println(&tbl[i])
-	}
-	fmt.Printf("tbl pointer value:%p\n", tbl)
-	DisplayPointer(tbl)
-}
 
-func DisplayPointer(tbl []uint8) {
-	fmt.Printf("tbl pointer value:%p\n", tbl)
+	// Get
+	u2, err := Get(u.UUID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("user 2 is: %#v\n", u2)
+
+	// Delete
+	fmt.Printf("list before delete: %#v\n", list[0])
+	err = Delete(u.UUID)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(findIndex(u.UUID))
+	fmt.Printf("list after delete: %#v\n", list)
+
 }
 
 func findIndex(uuid string) (int, error) {
@@ -86,7 +83,7 @@ func Add(fn, ln string) (*User, error) {
 
 func Delete(uuid string) error {
 	i, err := findIndex(uuid)
-	if err != ErrNotFound {
+	if err != nil {
 		return err
 	}
 	list = append(list[:i], list[i+1:]...)
