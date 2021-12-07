@@ -7,6 +7,8 @@ type Service struct {
 	services []Handler
 }
 
+// Handler is an interface for creating new services
+// that can be added with AddService function.
 type Handler interface {
 	InitRoutes(r *gin.Engine)
 }
@@ -17,6 +19,7 @@ func New() *Service {
 	}
 }
 
+// AddService is adding a service to the main Service.
 func (s *Service) AddService(h Handler) {
 	s.services = append(s.services, h)
 }
