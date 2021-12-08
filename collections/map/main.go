@@ -10,10 +10,10 @@ import (
 )
 
 type User struct {
-	UUID      string
-	FirstName string
-	LastName  string
-	CreateAt  time.Time
+	UUID      string    `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	CreateAt  time.Time `json:"create_at"`
 }
 
 func NewUser(fn, ln string) *User {
