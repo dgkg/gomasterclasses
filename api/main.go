@@ -3,12 +3,12 @@ package main
 import (
 	"go.uber.org/zap"
 
-	"github.com/dgkg/gomasterclasses/api/db/moke"
+	"github.com/dgkg/gomasterclasses/api/db/sqlite"
 	"github.com/dgkg/gomasterclasses/api/service"
 )
 
 func main() {
-	db := moke.New()
+	db := sqlite.New("test.db")
 	log, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
