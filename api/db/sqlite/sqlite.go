@@ -30,6 +30,10 @@ func New(filename string) *SQLite {
 	}
 }
 
+func (db *SQLite) SetConn(conn *gorm.DB) {
+	db.conn = conn
+}
+
 func (db *SQLite) CreateUser(u *model.User) (*model.User, error) {
 	u.UUID = uuid.NewString()
 	return u, db.conn.Model(model.User{}).Create(u).Error
