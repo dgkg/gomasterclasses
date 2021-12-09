@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/dgkg/gomasterclasses/api/db"
@@ -9,18 +12,33 @@ import (
 	"github.com/dgkg/gomasterclasses/api/service"
 )
 
+var (
+	ENV string = "local"
+	log *zap.Logger
+)
+
+func init() {
+	viper.SetConfigName("config") // name of config file (without extension)
+	viper.SetConfigType("yaml")   // REQUIRED if the config file does not have the extension in the name
+	viper.AddConfigPath(".")      // optionally look for config in the working directory
+	err := viper.ReadInConfig()   // Find and read the config file
+	if err != nil {               // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %w \n", err))
+	}
+	ENV = viper.GetString("ENV")
+	log, err = zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	log.Info(fmt.Sprintf("application env:%v", ENV))
+}
+
 func main() {
-	//ENV := os.Getenv("API_ENV")
-	ENV := "production"
 	var db db.Storage
 	if ENV == "production" {
 		db = postgres.New()
 	} else {
 		db = sqlite.New("test.db")
-	}
-	log, err := zap.NewProduction()
-	if err != nil {
-		panic(err)
 	}
 	service.New(db, log).InitRoutes().Run("9090")
 }
