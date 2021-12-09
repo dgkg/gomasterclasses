@@ -28,9 +28,7 @@ func (p *Password) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
-	h := sha256.New()
-	h.Write([]byte(s))
-	*p = Password(fmt.Sprintf("%x", h.Sum(nil)))
+	*p = Password(fmt.Sprintf("%x", sha256.Sum256([]byte(s))))
 	return nil
 }
 
