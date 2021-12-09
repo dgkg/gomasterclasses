@@ -3,6 +3,7 @@ package service
 import (
 	"net/http"
 
+	"github.com/dgkg/gomasterclasses/api/auth"
 	"github.com/dgkg/gomasterclasses/api/db"
 	"github.com/dgkg/gomasterclasses/api/model"
 	"github.com/gin-gonic/gin"
@@ -107,7 +108,14 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
+
+	jwtValue, err := auth.JWTSign(u.UUID, u.FirstName+" "+u.LastName)
+	if err != nil || u.Password != payload.Password {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"jwt": "value jwt",
+		"jwt": jwtValue,
 	})
 }
