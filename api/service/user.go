@@ -14,10 +14,11 @@ var _ Handler = &UserHandlers{}
 
 type UserHandlers struct {
 	db  db.Storage
-	log *zap.Logger
+	log *zap.SugaredLogger
 }
 
 func (uh *UserHandlers) InitRoutes(r *gin.Engine) {
+	gin.Logger()
 	r.GET("/users", uh.GetAll)
 	r.POST("/users", uh.Create)
 	r.PUT("/users/:user_id", uh.Update)

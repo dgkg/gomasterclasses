@@ -29,7 +29,6 @@ func JWTParse(jwtValue string) (map[string]interface{}, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims["uuid"], claims["full_name"])
 		res := map[string]interface{}(claims)
 		return res, nil
 	}

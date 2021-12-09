@@ -14,7 +14,7 @@ import (
 
 var (
 	ENV string = "local"
-	log *zap.Logger
+	log *zap.SugaredLogger
 )
 
 func init() {
@@ -26,10 +26,12 @@ func init() {
 		panic(fmt.Errorf("Fatal error config file: %w \n", err))
 	}
 	ENV = viper.GetString("ENV")
-	log, err = zap.NewProduction()
+	loggerp, err := zap.NewProduction()
+	log = loggerp.Sugar()
 	if err != nil {
 		panic(err)
 	}
+	defer log.Sync()
 	log.Info(fmt.Sprintf("application env:%v", ENV))
 }
 

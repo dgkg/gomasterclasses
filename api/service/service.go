@@ -11,7 +11,7 @@ type Service struct {
 	router   *gin.Engine
 	services []Handler
 	db       db.Storage
-	log      *zap.Logger
+	log      *zap.SugaredLogger
 }
 
 // Handler is an interface for creating new services
@@ -20,7 +20,7 @@ type Handler interface {
 	InitRoutes(r *gin.Engine)
 }
 
-func New(db db.Storage, log *zap.Logger) *Service {
+func New(db db.Storage, log *zap.SugaredLogger) *Service {
 	s := &Service{
 		router: gin.Default(),
 		db:     db,
