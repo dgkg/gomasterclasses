@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/dgkg/gomasterclasses/api/db"
-	"github.com/dgkg/gomasterclasses/api/db/postgres"
+	"github.com/dgkg/gomasterclasses/api/db/mongodb"
 	"github.com/dgkg/gomasterclasses/api/db/sqlite"
 	"github.com/dgkg/gomasterclasses/api/service"
 )
@@ -38,7 +38,7 @@ func init() {
 func main() {
 	var db db.Storage
 	if ENV == "production" {
-		db = postgres.New()
+		db = mongodb.New()
 	} else {
 		db = sqlite.New("test.db")
 	}
