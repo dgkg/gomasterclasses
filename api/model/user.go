@@ -11,7 +11,7 @@ type User struct {
 	UUID      string    `json:"id" gorm:"primaryKey"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
-	Email     string    `json:"email" gorm:"unique"`
+	Email     string    `json:"email"`
 	Password  Password  `json:"pass"`
 	CreateAt  time.Time `json:"create_at"`
 	UpdatedAt time.Time `json:"update_at"`

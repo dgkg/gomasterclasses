@@ -3,7 +3,6 @@ package mongodb
 import (
 	"context"
 	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,12 +10,13 @@ import (
 )
 
 type MongoDB struct {
-	conn *mongo.Client
+	conn    *mongo.Client
+	colUser *mongo.Collection
 }
 
 func New() *MongoDB {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// defer cancel()
 
 	localCredential := options.Credential{
 		//AuthMechanism: "MONGODB-AWS",
@@ -24,19 +24,20 @@ func New() *MongoDB {
 		Password: "example",
 	}
 	client, err := mongo.Connect(
-		ctx,
+		context.Background(),
 		options.Client().SetAuth(localCredential),
 		options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		panic(err)
 	}
 
-	err = client.Ping(ctx, readpref.Primary())
+	err = client.Ping(context.Background(), readpref.Primary())
 	if err != nil {
 		panic(err)
 	}
 	log.Print("success connected to Mongodb")
 	return &MongoDB{
-		conn: client,
+		conn:    client,
+		colUser: client.Database("main").Collection("users"),
 	}
 }

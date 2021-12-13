@@ -19,3 +19,15 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 27017:27017
+
+  mongocli:
+    image: mongo-express  
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: ambiance
+      ME_CONFIG_MONGODB_AUTH_DATABASE: "main"
+      ME_CONFIG_MONGODB_AUTH_USERNAME: "root"
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: "example"
+    ports:
+      - 8081:8081
+  
+    
